@@ -71,11 +71,20 @@ export const ecoCoach = asyncHandler(async (req, res) => {
 export const compareScenarios = asyncHandler(async (req, res) => {
     const { current, alternative } = req.body;
 
+    const pollutionDelta = alternative.carbon_score - current.carbon_score;
+    const forestDelta = current.carbon_score - alternative.carbon_score;
+
     res.json({
         success: true,
         data: {
-            pollution_change: alternative.carbon_score - current.carbon_score,
-            improvement: current.carbon_score - alternative.carbon_score
+            impact_difference:
+                pollutionDelta < 0
+                    ? "Significant reduction in pollution and environmental improvement"
+                    : "Increased pollution and environmental degradation",
+            visual_delta: {
+                pollution: pollutionDelta.toFixed(2),
+                forest: forestDelta.toFixed(2)
+            }
         }
     });
 });
